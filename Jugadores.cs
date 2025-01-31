@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace Project
 {
@@ -38,6 +40,10 @@ namespace Project
         }
 
         public virtual void ActivarHabilidad()
+        {
+        }
+
+        public virtual void DesactivarHabilidad()
         {
         }
 
@@ -110,9 +116,9 @@ namespace Project
                 }
 
 
-                if(!laberinto.HayPared(nuevaFila,nuevaColumna))
+                if(laberinto.HayPared(nuevaFila,nuevaColumna))
                 {
-                    Console.WriteLine("Por favor, salte hacia un lugar donde haya pared");
+                    Console.WriteLine("Por favor, salte hacia un lugar donde haya un espacio vacio");
                 }
 
                 // Verificar si hay una pared en la dirección seleccionada
@@ -121,6 +127,7 @@ namespace Project
                     // Mover al jugador a la nueva posición
                     PosicionActual = (nuevaFila, nuevaColumna);
                     HabilidadDisponible = false;
+                    laberinto.ResetearHabilidad();
                 }
                 else
                 {
@@ -135,16 +142,78 @@ namespace Project
 
         public class Personaje2 : Jugador
         {
-            public override int Velocidad => 3;
-            public Personaje2(int id, int row, int col) : base(id, row, col)
+            private MazeGenerator laberinto;
+            public override int Velocidad => 5;
+            public Personaje2(int id, int row, int col, MazeGenerator laberinto) : base(id, row, col)
             {
                 Console.WriteLine("Has elegido al Personaje 2");
-                Console.WriteLine("Su personaje puede aumentar su velocidad y avanza tres casillas ");
+                Console.WriteLine("Su personaje puede saltar trampas y avanza cinco casillas");
+                this.laberinto = laberinto;
             }
 
             public override void ActivarHabilidad()
             {
-                Console.WriteLine("Has activado la habilidad de aumentar velocidad");
+                Console.WriteLine("Has activado la habilidad de saltar trampas");
+                Console.WriteLine("Ingrese hacia qué dirección le gustaría saltar (W: Arriba, S: Abajo, A: Izquierda, D: Derecha):");
+                char direccion = Console.ReadKey().KeyChar;
+
+                // Obtener la posición actual del jugador
+                int filaActual = PosicionActual.Row;
+                int columnaActual = PosicionActual.Col;
+
+                // Variables para la nueva posición después del salto
+                int nuevaFila = filaActual;
+                int nuevaColumna = columnaActual;
+
+                // Calcular la nueva posición basada en la dirección
+                switch (char.ToUpper(direccion))
+                {
+                    case 'W': // Arriba
+                        nuevaFila -= 2;
+                        break;
+
+                    case 'S': // Abajo
+                        nuevaFila += 2;
+                        break;
+
+                    case 'A': // Izquierda
+                        nuevaColumna -= 2;
+                        break;
+
+                    case 'D': // Derecha
+                        nuevaColumna += 2;
+                        break;
+
+                    default:
+                        Console.WriteLine("Dirección inválida.");
+                        return;
+                }
+
+                // Verificar si la nueva posición está dentro de los límites del laberinto
+                if (nuevaFila < 0 || nuevaFila >= laberinto.Rows || nuevaColumna < 0 || nuevaColumna >= laberinto.Cols)
+                {
+                    Console.WriteLine("No puedes saltar fuera de los límites del laberinto.");
+                    return;
+                }
+
+                if(laberinto.HayPared(nuevaFila,nuevaColumna))
+                {
+                    Console.WriteLine("Por favor, salte hacia un lugar donde haya un espacio vacio");
+                }
+
+                // Verificar si hay una trampa en la nueva posición
+                if (laberinto.HayTrampa(filaActual + (nuevaFila - filaActual) / 2, columnaActual + (nuevaColumna - columnaActual) / 2))
+                {
+                    // Saltar la trampa
+                    PosicionActual = (nuevaFila, nuevaColumna);
+                    HabilidadDisponible = false;
+                    laberinto.ResetearHabilidad();
+                }
+                else
+                {
+                    Console.WriteLine("No hay una trampa en esa dirección.");
+                }
+                laberinto.PrintMaze();
             }
         }
 

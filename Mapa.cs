@@ -54,7 +54,7 @@ namespace Project
                     jugador1 = new Jugador.Personaje1(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 2:
-                    jugador1 = new Jugador.Personaje2(1, 1, 1); // Posición inicial del jugador 1
+                    jugador1 = new Jugador.Personaje2(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 3:
                     jugador1 = new Jugador.Personaje3(1, 1, 1); // Posición inicial del jugador 1
@@ -96,7 +96,7 @@ namespace Project
                     jugador2 = new Jugador.Personaje1(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 2:
-                    jugador2 = new Jugador.Personaje2(2, 1, 33); // Posición inicial del jugador 2
+                    jugador2 = new Jugador.Personaje2(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 3:
                     jugador2 = new Jugador.Personaje3(2, 1, 33); // Posición inicial del jugador 2
@@ -129,8 +129,8 @@ namespace Project
             }
 
             GenerarLaberinto(1,1);
-            mapa[33,1] = "😠 "; // meta del jugador 1
-            mapa[33,33] = "❤️ "; // meta del jugador 2
+            mapa[33,1] = "🏳️ "; // meta del jugador 1
+            mapa[33,33] = "🏴 "; // meta del jugador 2
             ColocarFichasDeRecompensa(20, 8);
         }
         public void ColocarFichasDeRecompensa(int cantidadFichas, int cantidadTrampas)
@@ -200,12 +200,12 @@ namespace Project
                     // Verifica si la celda actual es la posición del Jugador 1
                     if (i == jugador1.PosicionActual.Row && j == jugador1.PosicionActual.Col)
                     {
-                            Console.Write("😊 "); // Imprime al Jugador 1
+                            Console.Write("⚪ "); // Imprime al Jugador 1
                     }
                     // Verifica si la celda actual es la posición del Jugador 2
                     else if (i == jugador2.PosicionActual.Row && j == jugador2.PosicionActual.Col)
                     {
-                            Console.Write("😁 "); // Imprime al Jugador 2
+                            Console.Write("⚫ "); // Imprime al Jugador 2
                     }
                     else
                     {
@@ -426,25 +426,28 @@ namespace Project
                             break; 
                         }    
                     }
-
-                    if (!jugador1.HabilidadDisponible)
-                    {
-                        jugador1.TurnosHastaHabilidad--;
-                        if (jugador1.TurnosHastaHabilidad == 0)
-                        {
-                            jugador1.HabilidadDisponible = true;
-                        }
-                    }
-
-                    if (!jugador2.HabilidadDisponible)
-                    {
-                        jugador2.TurnosHastaHabilidad--;
-                        if (jugador2.TurnosHastaHabilidad == 0)
-                        {
-                            jugador2.HabilidadDisponible = true;
-                        }
-                    }
                 }   
+            }
+        }
+
+        public void ResetearHabilidad()
+        {
+            if (!jugador1.HabilidadDisponible)
+            {
+                jugador1.TurnosHastaHabilidad--;
+                if (jugador1.TurnosHastaHabilidad == 0)
+                {
+                    jugador1.HabilidadDisponible = true;
+                }
+            }
+
+            if (!jugador2.HabilidadDisponible)
+            {
+                jugador2.TurnosHastaHabilidad--;
+                if (jugador2.TurnosHastaHabilidad == 0)
+                {
+                    jugador2.HabilidadDisponible = true;
+                }
             }
         }
 
@@ -458,6 +461,18 @@ namespace Project
 
             // Verifica si la celda es una pared
             return mapa[fila, columna] == "⬜ ";
+        }
+
+        public bool HayTrampa(int fila,int columna)
+        {
+            // Verificar si la posición está dentro de los límites del laberinto
+            if (fila < 0 || fila >= Rows || columna < 0 || columna >= Cols)
+            {
+                return false;
+            }
+
+            // Verificar si hay una trampa en la posición
+            return mapa[fila, columna] == "🧨 ";
         }
         
     }
