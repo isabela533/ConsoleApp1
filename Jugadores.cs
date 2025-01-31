@@ -8,13 +8,14 @@ namespace Project
         public (int Row, int Col) PosicionInicial { get; } // Posición inicial del jugador
         public (int Row, int Col) PosicionActual { get; set; } // Posición actual del jugador
         public int DiamantesRecogidos { get; set; }
-        public int TiempoEnfriamiento { get; set; }
+        public int Trampas { get; set; }
         public abstract int Velocidad { get; }
         public Jugador(int id, int row, int col)
         {
             Id = id;
             PosicionActual = (row, col);
             DiamantesRecogidos = 0; // Inicializar contador de diamantes recogidos
+            Trampas = 0;
         }
 
         public void Mover(int newRow, int newCol)
@@ -27,9 +28,14 @@ namespace Project
             DiamantesRecogidos++;
         }
 
+        public void CaerTrampa()
+        {
+            Trampas++;
+        }
+
         public void ImprimirPosicion()
         {
-              Console.WriteLine($"Jugador {Id}: Posición Inicial = ({PosicionInicial.Row}, {PosicionInicial.Col}), Posición Actual = ({PosicionActual.Row}, {PosicionActual.Col}), Diamantes Recogidos = {DiamantesRecogidos}");
+              Console.WriteLine($"Jugador {Id}:Posición Actual = ({PosicionActual.Row}, {PosicionActual.Col}), Diamantes Recogidos = {DiamantesRecogidos}, Trampas = {Trampas}");
         }
         public class JugadorBase : Jugador
         {

@@ -1,7 +1,4 @@
-﻿//arreglar lo de la posicion inicial de los jugadores 
-// arreglar que cuando en las opciones se ponga otra cosa que no sean llos numeros que de error
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 namespace Project
 {
     public class MazeGenerator
@@ -196,8 +193,6 @@ namespace Project
 
         public void PrintMaze()
         {
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Cols; j++)
@@ -223,8 +218,6 @@ namespace Project
             // Imprime las posiciones de los jugadores
             jugador1.ImprimirPosicion();
             jugador2.ImprimirPosicion();
-
-            Console.Out.Flush();
         }
         
         public bool MoverJugador(int idJugador)
@@ -242,7 +235,7 @@ namespace Project
             }
             else if (idJugador==2)
             {
-                Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (I: Arriba, K: Izquierda, J: Abajo, L: Derecha) o Q para salir:");
+                Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (I: Arriba, J: Izquierda, K: Abajo, L: Derecha) o Q para salir:");
             }
             char tecla = Console.ReadKey().KeyChar;
             Console.WriteLine(); // Salto de línea
@@ -259,37 +252,63 @@ namespace Project
                 Environment.Exit(0); // Salir del juego
             }
 
-            switch (char.ToUpper(tecla))
+            switch(idJugador)
             {
-                case 'W': // Arriba
-                   newRow--;
-                   break;
-                case 'A': // Izquierda
-                    newCol--; 
-                    break;
-                    case 'S': // Abajo
-                    newRow++;
-                    break;
-                case 'D': // Derecha
-                    newCol++;
-                    break;
-                default:
-                    Console.WriteLine("Tecla inválida. Use W, A, S o D.");
-                    return false;
+                case 1:
+                    switch (char.ToUpper(tecla))
+                    {
+                        case 'W': // Arriba
+                            newRow--;
+                            break;
+                        case 'A': // Izquierda
+                            newCol--; 
+                            break;
+                        case 'S': // Abajo
+                            newRow++;
+                            break;
+                        case 'D': // Derecha
+                            newCol++;
+                            break;
+                        default:
+                            Console.WriteLine("Tecla inválida. Use W, A, S o D.");
+                            return MoverJugador(idJugador);                    
+                    }
+                break;
+
+                case 2:
+                    switch (char.ToUpper(tecla))
+                    {
+                        case 'I': // Arriba
+                            newRow--;
+                            break;
+                        case 'J': // Izquierda
+                            newCol--;
+                            break;
+                        case 'K': // Abajo
+                            newRow++;
+                            break;
+                        case 'L': // Derecha
+                            newCol++;
+                            break;
+                        default:
+                        Console.WriteLine("Tecla inválida. Use I, J, K o L.");
+                        return MoverJugador(idJugador);
+                    }
+                break;
             }
                 
             // Verificar si la nueva posición está dentro de los límites del laberinto
             if (newRow < 0 || newRow >= Rows || newCol < 0 || newCol >= Cols)
             {
                 Console.WriteLine("Movimiento inválido: Fuera de los límites del laberinto.");
-                return false;
+                return MoverJugador(idJugador);
             }
 
             // Verificar si la nueva posición es una pared
             if (mapa[newRow, newCol] == "⬜ ")
             {
                 Console.WriteLine("Movimiento inválido: No puedes moverte a una pared.");
-                return false;
+                return MoverJugador(idJugador);
             }
         
             if (mapa[newRow, newCol] == "💎 ")
@@ -306,18 +325,29 @@ namespace Project
 
                 // Limpiar la posición del diamante en el mapa
                 mapa[newRow, newCol] = "   ";
+                return false;
             }
-            else if (mapa[newRow,newCol]=="🧨 ")
+            
+            if (mapa[newRow, newCol] == "🧨 ")
             {
+                Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
                 if (idJugador == 1)
                 {
-                    jugador1.TiempoEnfriamiento = 2; // 2 turnos de enfriamiento
+                    jugador1.CaerTrampa();
+                    for (int i = 0; i < jugador2.Velocidad;i++)
+                    {
+                        MoverJugador(2);
+                    }
                 }
                 else if (idJugador == 2)
                 {
-                    jugador2.TiempoEnfriamiento = 2; // 2 turnos de enfriamiento
+                    jugador2.CaerTrampa();
+                    for(int i = 0; i < jugador1.Velocidad; i++)
+                    {
+                        MoverJugador(1);  
+                    }            
                 }
-                Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
+                mapa[newRow,newCol] = "   ";
                 return false;
             }
 
@@ -356,39 +386,21 @@ namespace Project
                 {   
                     for(int i = 0; i < jugador1.Velocidad;i++)
                     {
-                        if(jugador1.TiempoEnfriamiento > 0)
+                        if(MoverJugador(1)==true)
                         {
-                            Console.WriteLine("Jugador 1 esta en turno de enfriamiento debido a que cayo en una trampa");
-                            jugador1.TiempoEnfriamiento --;
-                        }
-
-                        else 
-                        {
-                            if(MoverJugador(1)==true)
-                            {
-                                JuegoTerminado = true; // Victoria del Jugador 1
-                                break;       
-                            }  
-                        }
+                            JuegoTerminado = true; // Victoria del Jugador 1
+                            break;       
+                        }   
                     }
 
                     for(int i = 0; i < jugador2.Velocidad; i++)
                     {
                         
-                        if(jugador2.TiempoEnfriamiento > 0)
+                        if ( MoverJugador(2)==true)
                         {
-                            Console.WriteLine("Jugador 2 esta en turno de enfriamiento debido a que cayo en una trampa");
-                            jugador2.TiempoEnfriamiento --;
-                        }
-            
-                        else 
-                        {
-                            if ( MoverJugador(2)==true)
-                            {
-                                JuegoTerminado = true; // Victoria del Jugador 2
-                                break; 
-                            } 
-                        }     
+                            JuegoTerminado = true; // Victoria del Jugador 2
+                            break; 
+                        }    
                     }
                 }   
             } 
