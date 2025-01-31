@@ -5,8 +5,8 @@ namespace Project
     {
         private string NameGame; 
         private string[,] mapa;
-        private int Rows;
-        private int Cols;
+        public int Rows;
+        public int Cols;
         private Random random;
         private Jugador jugador1;
         private Jugador jugador2;
@@ -51,7 +51,7 @@ namespace Project
             switch (opcion1)
             {
                 case 1:
-                    jugador1 = new Jugador.Personaje1(1, 1, 1); // Posición inicial del jugador 1
+                    jugador1 = new Jugador.Personaje1(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 2:
                     jugador1 = new Jugador.Personaje2(1, 1, 1); // Posición inicial del jugador 1
@@ -93,7 +93,7 @@ namespace Project
             switch (opcion2)
             {
                 case 1:
-                    jugador2 = new Jugador.Personaje1(2, 1, 33); // Posición inicial del jugador 2
+                    jugador2 = new Jugador.Personaje1(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 2:
                     jugador2 = new Jugador.Personaje2(2, 1, 33); // Posición inicial del jugador 2
@@ -231,11 +231,11 @@ namespace Project
             if(idJugador==1)
             {
                 // Solicitar al usuario que ingrese una tecla (W, A, S, D)
-                Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (W: Arriba, A: Izquierda, S: Abajo, D: Derecha) o Q para salir:");
+                Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (W: Arriba, A: Izquierda, S: Abajo, D: Derecha), G para activar su habilidad o Q para salir:");
             }
             else if (idJugador==2)
             {
-                Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (I: Arriba, J: Izquierda, K: Abajo, L: Derecha) o Q para salir:");
+                Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (I: Arriba, J: Izquierda, K: Abajo, L: Derecha) G para activar su habilidad o Q para salir:");
             }
             char tecla = Console.ReadKey().KeyChar;
             Console.WriteLine(); // Salto de línea
@@ -257,6 +257,17 @@ namespace Project
                 case 1:
                     switch (char.ToUpper(tecla))
                     {
+                        case 'G': // Activar habilidad del jugador 1
+                            if(jugador1.HabilidadDisponible==true)
+                            {
+                                jugador1.ActivarHabilidad();
+                                jugador1.TurnosHastaHabilidad += 5;
+                            }
+                            else
+                            {
+                                Console.WriteLine("La habilidad no está disponible en este momento. Vuelva a intentar pasados 5 turnos");
+                            }
+                            return false;
                         case 'W': // Arriba
                             newRow--;
                             break;
@@ -270,7 +281,7 @@ namespace Project
                             newCol++;
                             break;
                         default:
-                            Console.WriteLine("Tecla inválida. Use W, A, S o D.");
+                            Console.WriteLine("Tecla inválida. Use W, A, S, D o G.");
                             return MoverJugador(idJugador);                    
                     }
                 break;
@@ -278,6 +289,18 @@ namespace Project
                 case 2:
                     switch (char.ToUpper(tecla))
                     {
+                        case 'G':
+                            if (jugador2.HabilidadDisponible == true)
+                            {
+                                // Activar la habilidad del jugador 2
+                                jugador2.ActivarHabilidad();
+                                jugador2.TurnosHastaHabilidad += 5;
+                            }
+                            else
+                            {
+                                Console.WriteLine("La habilidad no está disponible en este momento. Vuelva a intentar pasados 5 turnos");
+                            }
+                             return false;
                         case 'I': // Arriba
                             newRow--;
                             break;
@@ -291,7 +314,7 @@ namespace Project
                             newCol++;
                             break;
                         default:
-                        Console.WriteLine("Tecla inválida. Use I, J, K o L.");
+                        Console.WriteLine("Tecla inválida. Use I, J, K, L o G.");
                         return MoverJugador(idJugador);
                     }
                 break;
@@ -330,6 +353,7 @@ namespace Project
             
             if (mapa[newRow, newCol] == "🧨 ")
             {
+                PrintMaze();
                 Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
                 if (idJugador == 1)
                 {
@@ -402,8 +426,39 @@ namespace Project
                             break; 
                         }    
                     }
+
+                    if (!jugador1.HabilidadDisponible)
+                    {
+                        jugador1.TurnosHastaHabilidad--;
+                        if (jugador1.TurnosHastaHabilidad == 0)
+                        {
+                            jugador1.HabilidadDisponible = true;
+                        }
+                    }
+
+                    if (!jugador2.HabilidadDisponible)
+                    {
+                        jugador2.TurnosHastaHabilidad--;
+                        if (jugador2.TurnosHastaHabilidad == 0)
+                        {
+                            jugador2.HabilidadDisponible = true;
+                        }
+                    }
                 }   
-            } 
+            }
         }
+
+        public bool HayPared(int fila, int columna)
+        {
+            // Verifica si la posición está dentro de los límites del laberinto
+            if (fila < 0 || fila >= Rows || columna < 0 || columna >= Cols)
+            {
+                return true; // Si está fuera del laberinto, se considera una pared
+            }
+
+            // Verifica si la celda es una pared
+            return mapa[fila, columna] == "⬜ ";
+        }
+        
     }
 }

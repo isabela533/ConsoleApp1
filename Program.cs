@@ -12,7 +12,6 @@ namespace Project
             MazeGenerator mazeGenerator = new MazeGenerator(rows, cols);
             mazeGenerator.PrintMaze();
             
-            Console.WriteLine("¡Comienza el juego!");
             mazeGenerator.JugarPorTurno();
         }
     }
