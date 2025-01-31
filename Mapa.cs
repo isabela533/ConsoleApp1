@@ -57,7 +57,7 @@ namespace Project
                     jugador1 = new Jugador.Personaje2(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 3:
-                    jugador1 = new Jugador.Personaje3(1, 1, 1); // Posición inicial del jugador 1
+                    jugador1 = new Jugador.Personaje3(1, 1, 1, this, jugador2); // Posición inicial del jugador 1
                     break;
                 case 4:
                     jugador1 = new Jugador.Personaje4(1, 1, 1); // Posición inicial del jugador 1
@@ -99,7 +99,7 @@ namespace Project
                     jugador2 = new Jugador.Personaje2(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 3:
-                    jugador2 = new Jugador.Personaje3(2, 1, 33); // Posición inicial del jugador 2
+                    jugador2 = new Jugador.Personaje3(2, 1, 33, this, jugador1); // Posición inicial del jugador 2
                     break;
                 case 4:
                     jugador2 = new Jugador.Personaje4(2, 1, 33); // Posición inicial del jugador 2

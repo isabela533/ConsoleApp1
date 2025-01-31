@@ -219,16 +219,32 @@ namespace Project
 
         public class Personaje3 : Jugador
         {
+            private MazeGenerator laberinto;
+            private Jugador oponente;
             public override int Velocidad => 5;
-            public Personaje3(int id, int row, int col) : base(id, row, col)
+            public Personaje3(int id, int row, int col, MazeGenerator laberinto, Jugador oponente) : base(id, row, col)
             {
                 Console.WriteLine("Has elegido al Personaje 3");
                 Console.WriteLine("Su personaje puede robar diamantes a su oponente y avanza cinco casillas ");
+                this.laberinto = laberinto;
+                this.oponente = oponente;
             }
 
             public override void ActivarHabilidad()
             {
                 Console.WriteLine("Has activado la habilidad de robo de diamantes");
+                if (oponente.DiamantesRecogidos > 0)
+                {
+                    oponente.DiamantesRecogidos--;
+                    DiamantesRecogidos++;
+                    Console.WriteLine("Ha robado un diamante a su oponente");
+                }
+                else
+                {
+                    Console.WriteLine("Su oponente no tiene diamantes para robar");
+                }
+                HabilidadDisponible = false;
+                laberinto.ResetearHabilidad();
             }
         }
 
