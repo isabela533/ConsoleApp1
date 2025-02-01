@@ -66,5 +66,5 @@ Competitividad: La interacción entre las habilidades de los personajes añade p
 
 Dificultad: El laberinto se regenera en cada partida, garantizando variedad.
 
-Nota: Este proyecto se debe abrir en el editor de texto Visual Studio Code.
+Nota: Este proyecto se debe abrir en el editor de codigo Visual Studio Code.
  
