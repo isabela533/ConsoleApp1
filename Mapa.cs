@@ -193,6 +193,7 @@ namespace Project
 
         public void PrintMaze()
         {
+            Console.Clear();
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Cols; j++)
