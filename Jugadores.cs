@@ -1,15 +1,19 @@
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Project
 {
     public abstract class Jugador
     {
-        public int Id { get; } // Identificador del jugador
+        public int Id { get; set; } // Identificador del jugador
         public (int Row, int Col) PosicionInicial { get; } // Posición inicial del jugador
         public (int Row, int Col) PosicionActual { get; set; } // Posición actual del jugador
-        public int DiamantesRecogidos { get; set; }
+        public int DiamantesRecogidos1 { get; set; }
+        public int DiamantesRecogidos2 { get; set; }
+        public List<int> Diamantes1;
+        public List<int> Diamantes2;
         public int Trampas { get; set; }
         public abstract int Velocidad { get; }
         public int TurnosHastaHabilidad { get; set; }
@@ -18,10 +22,13 @@ namespace Project
         {
             Id = id;
             PosicionActual = (row, col);
-            DiamantesRecogidos = 0; // Inicializar contador de diamantes recogidos
+            DiamantesRecogidos1 = 0; // Inicializar contador de diamantes recogidos
+            DiamantesRecogidos2 = 0; // Inicializar contador de diamantes
             Trampas = 0;
             TurnosHastaHabilidad = 0;
             HabilidadDisponible = true;
+            Diamantes1 = new List<int>();
+            Diamantes2 = new List<int>();
         }
 
         public void Mover(int newRow, int newCol)
@@ -29,9 +36,16 @@ namespace Project
             PosicionActual = (newRow, newCol);
         }
 
-        public void RecogerDiamante()
+        public void RecogerDiamante1()
         {
-            DiamantesRecogidos++;
+            DiamantesRecogidos1++;
+            Diamantes1.Add(DiamantesRecogidos1);
+        }
+
+        public void RecogerDiamante2()
+        {
+            DiamantesRecogidos2++;
+            Diamantes2.Add(DiamantesRecogidos2);
         }
 
         public void CaerTrampa()
@@ -49,7 +63,14 @@ namespace Project
 
         public void ImprimirPosicion()
         {
-              Console.WriteLine($"Jugador {Id}:Posición Actual = ({PosicionActual.Row}, {PosicionActual.Col}), Diamantes Recogidos = {DiamantesRecogidos}, Trampas = {Trampas}");
+            if(Id == 1)
+            {
+                Console.WriteLine($"Jugador {Id}:Posición Actual = ({PosicionActual.Row}, {PosicionActual.Col}), Diamantes Recogidos = {DiamantesRecogidos1}, Trampas = {Trampas}");
+            }   
+            else if (Id == 2)
+            {
+                Console.WriteLine($"Jugador {Id}:Posición Actual = ({PosicionActual.Row}, {PosicionActual.Col}), Diamantes Recogidos = {DiamantesRecogidos2}, Trampas = {Trampas}");
+            }
         }
         public class JugadorBase : Jugador
         {
@@ -220,23 +241,31 @@ namespace Project
         public class Personaje3 : Jugador
         {
             private MazeGenerator laberinto;
-            private Jugador oponente;
             public override int Velocidad => 5;
-            public Personaje3(int id, int row, int col, MazeGenerator laberinto, Jugador oponente) : base(id, row, col)
+            public Personaje3(int id, int row, int col, MazeGenerator laberinto) : base(id, row, col)
             {
                 Console.WriteLine("Has elegido al Personaje 3");
                 Console.WriteLine("Su personaje puede robar diamantes a su oponente y avanza cinco casillas ");
                 this.laberinto = laberinto;
-                this.oponente = oponente;
             }
-
+        
             public override void ActivarHabilidad()
             {
                 Console.WriteLine("Has activado la habilidad de robo de diamantes");
-                if (oponente.DiamantesRecogidos > 0)
+                int diamantesOponente = (Id == 1) ? Diamantes2.Count : Diamantes1.Count;
+                Console.WriteLine($"El oponente tiene {diamantesOponente} diamantes recogidos.");
+                if (diamantesOponente > 0)
                 {
-                    oponente.DiamantesRecogidos--;
-                    DiamantesRecogidos++;
+                    if(Id==1)
+                    {
+                        Diamantes2.Remove(1);
+                        Diamantes1.Add(1);
+                    }
+                    else if(Id == 2)
+                    {
+                        Diamantes1.Remove(1);
+                        Diamantes2.Add(1);
+                    }
                     Console.WriteLine("Ha robado un diamante a su oponente");
                 }
                 else
@@ -244,7 +273,7 @@ namespace Project
                     Console.WriteLine("Su oponente no tiene diamantes para robar");
                 }
                 HabilidadDisponible = false;
-                laberinto.ResetearHabilidad();
+                laberinto.ResetearHabilidad();        
             }
         }
 

@@ -8,8 +8,8 @@ namespace Project
         public int Rows;
         public int Cols;
         private Random random;
-        private Jugador jugador1;
-        private Jugador jugador2;
+        public Jugador jugador1;
+        public Jugador jugador2;
         private (int Row, int Col) metaJugador1 = (33, 1); // Meta del Jugador 1
         private (int Row, int Col) metaJugador2 = (33, 33); //Meta del jugador 2
         
@@ -57,7 +57,7 @@ namespace Project
                     jugador1 = new Jugador.Personaje2(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 3:
-                    jugador1 = new Jugador.Personaje3(1, 1, 1, this, jugador2); // Posición inicial del jugador 1
+                    jugador1 = new Jugador.Personaje3(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 4:
                     jugador1 = new Jugador.Personaje4(1, 1, 1); // Posición inicial del jugador 1
@@ -99,7 +99,7 @@ namespace Project
                     jugador2 = new Jugador.Personaje2(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 3:
-                    jugador2 = new Jugador.Personaje3(2, 1, 33, this, jugador1); // Posición inicial del jugador 2
+                    jugador2 = new Jugador.Personaje3(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 4:
                     jugador2 = new Jugador.Personaje4(2, 1, 33); // Posición inicial del jugador 2
@@ -339,11 +339,11 @@ namespace Project
                 // Recoger el diamante
                 if (idJugador == 1)
                 {
-                    jugador1.RecogerDiamante();
+                    jugador1.RecogerDiamante1();
                 }
                 else if (idJugador == 2)
                 {
-                    jugador2.RecogerDiamante();
+                    jugador2.RecogerDiamante2();
                 }
 
                 // Limpiar la posición del diamante en el mapa
@@ -385,12 +385,12 @@ namespace Project
                 jugador2.Mover(newRow, newCol);
             }
 
-            if (idJugador == 1 && newRow == metaJugador1.Row && newCol == metaJugador1.Col && jugador1.DiamantesRecogidos >= 10)
+            if (idJugador == 1 && newRow == metaJugador1.Row && newCol == metaJugador1.Col && jugador1.DiamantesRecogidos1 >= 10)
             {
                 Console.WriteLine("¡Felicidades! El Jugador 1 ha llegado a su meta.");
                 return true; // Victoria del Jugador 1
             }
-            else if (idJugador == 2 && newRow == metaJugador2.Row && newCol == metaJugador2.Col && jugador2.DiamantesRecogidos >= 10)
+            else if (idJugador == 2 && newRow == metaJugador2.Row && newCol == metaJugador2.Col && jugador2.DiamantesRecogidos2 >= 10)
             {
                 Console.WriteLine("¡Felicidades! El Jugador 2 ha llegado a su meta.");
                 return true; // Victoria del Jugador 2
