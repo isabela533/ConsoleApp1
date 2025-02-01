@@ -60,9 +60,11 @@ Pierdes tu turno y el rival avanza.
 Las trampas se eliminan del mapa tras activarse.
 
 - Experiencia del Jugador
-Estrategia: Equilibrar la recolección de diamantes con la gestión de habilidades y la evitación de trampas.
+Estrategia: Equilibrar la recolección de diamantes con la gestión de habilidades y evitar trampas.
 
 Competitividad: La interacción entre las habilidades de los personajes añade profundidad (ej: saltar paredes vs. evitar trampas).
 
 Dificultad: El laberinto se regenera en cada partida, garantizando variedad.
+
+Nota: Este proyecto se debe abrir en el editor de texto Visual Studio Code.
  
