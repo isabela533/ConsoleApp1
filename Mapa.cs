@@ -57,10 +57,10 @@ namespace Project
                     jugador1 = new Jugador.Personaje2(1, 1, 1, this); // Posición inicial del jugador 1
                     break;
                 case 3:
-                    jugador1 = new Jugador.Personaje3(1, 1, 1, this); // Posición inicial del jugador 1
+                    jugador1 = new Jugador.Personaje3(1, 1, 1); // Posición inicial del jugador 1
                     break;
                 case 4:
-                    jugador1 = new Jugador.Personaje4(1, 1, 1); // Posición inicial del jugador 1
+                    jugador1 = new Jugador.Personaje4(1, 1, 1,this); // Posición inicial del jugador 1
                     break;
                 case 5:
                     jugador1 = new Jugador.Personaje5(1, 1, 1); // Posición inicial del jugador 1
@@ -99,10 +99,10 @@ namespace Project
                     jugador2 = new Jugador.Personaje2(2, 1, 33, this); // Posición inicial del jugador 2
                     break;
                 case 3:
-                    jugador2 = new Jugador.Personaje3(2, 1, 33, this); // Posición inicial del jugador 2
+                    jugador2 = new Jugador.Personaje3(2, 1, 33); // Posición inicial del jugador 2
                     break;
                 case 4:
-                    jugador2 = new Jugador.Personaje4(2, 1, 33); // Posición inicial del jugador 2
+                    jugador2 = new Jugador.Personaje4(2, 1, 33,this); // Posición inicial del jugador 2
                     break;
                 case 5:
                     jugador2 = new Jugador.Personaje5(2, 1, 33); // Posición inicial del jugador 2
@@ -339,11 +339,11 @@ namespace Project
                 // Recoger el diamante
                 if (idJugador == 1)
                 {
-                    jugador1.RecogerDiamante1();
+                    jugador1.RecogerDiamante();
                 }
                 else if (idJugador == 2)
                 {
-                    jugador2.RecogerDiamante2();
+                    jugador2.RecogerDiamante();
                 }
 
                 // Limpiar la posición del diamante en el mapa
@@ -385,12 +385,12 @@ namespace Project
                 jugador2.Mover(newRow, newCol);
             }
 
-            if (idJugador == 1 && newRow == metaJugador1.Row && newCol == metaJugador1.Col && jugador1.DiamantesRecogidos1 >= 10)
+            if (idJugador == 1 && newRow == metaJugador1.Row && newCol == metaJugador1.Col && jugador1.DiamantesRecogidos >= 10)
             {
                 Console.WriteLine("¡Felicidades! El Jugador 1 ha llegado a su meta.");
                 return true; // Victoria del Jugador 1
             }
-            else if (idJugador == 2 && newRow == metaJugador2.Row && newCol == metaJugador2.Col && jugador2.DiamantesRecogidos2 >= 10)
+            else if (idJugador == 2 && newRow == metaJugador2.Row && newCol == metaJugador2.Col && jugador2.DiamantesRecogidos >= 10)
             {
                 Console.WriteLine("¡Felicidades! El Jugador 2 ha llegado a su meta.");
                 return true; // Victoria del Jugador 2
