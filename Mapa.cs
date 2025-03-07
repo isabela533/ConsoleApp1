@@ -3,16 +3,19 @@ namespace Project
 {
     public class MazeGenerator
     {
-        private string NameGame; 
+        #region Variables
+        private string NameGame;
         private string[,] mapa;
         public int Rows;
         public int Cols;
         private Random random;
+        private (int, int, int) poss1;
+        private (int, int, int) poss2;
         public Jugador jugador1;
         public Jugador jugador2;
         private (int Row, int Col) metaJugador1 = (33, 1); // Meta del Jugador 1
         private (int Row, int Col) metaJugador2 = (33, 33); //Meta del jugador 2
-        
+        #endregion
 
         public MazeGenerator(int rows, int cols)
         {
@@ -21,8 +24,8 @@ namespace Project
             Cols = cols;
             mapa = new string[Rows, Cols];
             random = new Random();
-            jugador1 = new Jugador.JugadorBase(1,1,1);
-            jugador2 = new Jugador.JugadorBase(2,1,33);
+            poss1 = (1, 1, 1);
+            poss2 = (2, 1, 33);
             InitializeMaze();
         }
 
@@ -30,11 +33,11 @@ namespace Project
         {
             Console.WriteLine($"Bienvenidos al {NameGame}");
             Console.WriteLine("Por favor, escriba el numero del personaje que desea para el jugador 1:");
-            Console.WriteLine("1. Personaje 1");
-            Console.WriteLine("2. Personaje 2");
-            Console.WriteLine("3. Personaje 3");
-            Console.WriteLine("4. Personaje 4");
-            Console.WriteLine("5. Personaje 5");
+            Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes        Velocidad: 4 casillas");
+            Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas        Velocidad: 5 casillas");
+            Console.WriteLine("3. Personaje 3  Habilidad: No tiene              Velocidad: 8 casillas");
+            Console.WriteLine("4. Personaje 4  Habilidad: Sumarse un diamante   Velocidad: 4 casillas");
+            Console.WriteLine("5. Personaje 5  Habilidad: No tiene              Velocidad: 10 casillas");
 
             int opcion1;
             while (true)
@@ -51,25 +54,25 @@ namespace Project
             switch (opcion1)
             {
                 case 1:
-                    jugador1 = new Jugador.Personaje1(1, 1, 1, this); // Posición inicial del jugador 1
+                    jugador1 = new Personaje1(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 2:
-                    jugador1 = new Jugador.Personaje2(1, 1, 1, this); // Posición inicial del jugador 1
+                    jugador1 = new Personaje2(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 3:
-                    jugador1 = new Jugador.Personaje3(1, 1, 1); // Posición inicial del jugador 1
+                    jugador1 = new Personaje3(poss1); // Posición inicial del jugador 1
                     break;
                 case 4:
-                    jugador1 = new Jugador.Personaje4(1, 1, 1,this); // Posición inicial del jugador 1
+                    jugador1 = new Personaje4(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 5:
-                    jugador1 = new Jugador.Personaje5(1, 1, 1); // Posición inicial del jugador 1
+                    jugador1 = new Personaje5(poss1); // Posición inicial del jugador 1
                     break;
                 default:
                     Console.WriteLine("Opción inválida");
                     break;
             }
-            
+
 
             Console.WriteLine("Por favor, escriba el numero del personaje que desea para el jugador 2:");
             Console.WriteLine("1. Personaje 1");
@@ -85,7 +88,7 @@ namespace Project
                 {
                     break;
                 }
-                 else
+                else
                 {
                     Console.WriteLine("Opción inválida. Por favor, ingrese un número entre 1 y 5.");
                 }
@@ -93,33 +96,26 @@ namespace Project
             switch (opcion2)
             {
                 case 1:
-                    jugador2 = new Jugador.Personaje1(2, 1, 33, this); // Posición inicial del jugador 2
+                    jugador2 = new Personaje1(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 2:
-                    jugador2 = new Jugador.Personaje2(2, 1, 33, this); // Posición inicial del jugador 2
+                    jugador2 = new Personaje2(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 3:
-                    jugador2 = new Jugador.Personaje3(2, 1, 33); // Posición inicial del jugador 2
+                    jugador2 = new Personaje3(poss2); // Posición inicial del jugador 2
                     break;
                 case 4:
-                    jugador2 = new Jugador.Personaje4(2, 1, 33,this); // Posición inicial del jugador 2
+                    jugador2 = new Personaje4(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 5:
-                    jugador2 = new Jugador.Personaje5(2, 1, 33); // Posición inicial del jugador 2
+                    jugador2 = new Personaje5(poss2); // Posición inicial del jugador 2
                     break;
                 default:
                     Console.WriteLine("Opción inválida");
                     break;
             }
-            
 
-            Console.WriteLine("Las reglas del juego son las siguientes:");
-            Console.WriteLine("1. Cada jugador debe recoger 10 diamantes y llevarlos hacia la meta que le corresponde. El primer jugador que lo logre, gana");
-            Console.WriteLine("2. Evite las trampas ya que estas hacen que pierda 2 turnos");
-            Console.WriteLine("3. Puede usar su habilidad en el momento que lo desee pulsando la tecla 'G'");
-            Console.WriteLine("4. Una vez utilizada su habilidad, no podra usarla nuevamente por los siguientes 5 tunos");
-            Console.WriteLine("Ahora si, que comience el juego!!");
-            
+
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Cols; j++)
@@ -128,17 +124,18 @@ namespace Project
                 }
             }
 
-            GenerarLaberinto(1,1);
-            mapa[33,1] = "🏳️ "; // meta del jugador 1
-            mapa[33,33] = "🏴 "; // meta del jugador 2
+            GenerarLaberinto(1, 1);
+            mapa[33, 1] = "🏳️ "; // meta del jugador 1
+            mapa[33, 33] = "🏴 "; // meta del jugador 2
             ColocarFichasDeRecompensa(20, 8);
         }
+
         public void ColocarFichasDeRecompensa(int cantidadFichas, int cantidadTrampas)
         {
             Random random = new Random();
             int filas = mapa.GetLength(0);
             int columnas = mapa.GetLength(1);
-            
+
             // Colocar fichas de recompensa
             for (int i = 0; i < cantidadFichas; i++)
             {
@@ -147,7 +144,7 @@ namespace Project
                 {
                     fila = random.Next(1, filas - 1);
                     columna = random.Next(1, columnas - 1);
-                } while ((mapa[fila, columna] != "   ") || (fila==1 && columna==1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
+                } while ((mapa[fila, columna] != "   ") || (fila == 1 && columna == 1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
 
                 mapa[fila, columna] = "💎 ";
             }
@@ -158,16 +155,17 @@ namespace Project
                 {
                     fila = random.Next(1, filas - 1);
                     columna = random.Next(1, columnas - 1);
-                } while ((mapa[fila, columna] != "   ") || (fila==1 && columna==1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
+                } while ((mapa[fila, columna] != "   ") || (fila == 1 && columna == 1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
 
                 mapa[fila, columna] = "🧨 ";
-            }    
+            }
         }
+        
         public void GenerarLaberinto(int row, int col)
         {
             mapa[row, col] = "   "; // Marca la celda actual como espacio vacío
 
-            var move = new(int, int)[]
+            var move = new (int, int)[]
             {
                 (-2, 0),
                 (2, 0),
@@ -194,6 +192,15 @@ namespace Project
         public void PrintMaze()
         {
             Console.Clear();
+            Console.WriteLine("Las reglas del juego son las siguientes:");
+            Console.WriteLine("1. Cada jugador debe recoger 10 diamantes y llevarlos hacia la meta que le corresponde. El primer jugador que lo logre, gana");
+            Console.WriteLine("2. Evite las trampas ya que estas hacen que pierda 2 turnos");
+            Console.WriteLine("3. Puede usar su habilidad en el momento que lo desee pulsando la tecla 'G'");
+            Console.WriteLine("4. Una vez utilizada su habilidad, no podra usarla nuevamente por los siguientes 5 tunos");
+            Console.WriteLine("5. Cuando veas una frase presiona Enter");
+            Console.WriteLine("Ahora si, que comience el juego!!");
+            Console.WriteLine();
+
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Cols; j++)
@@ -201,26 +208,26 @@ namespace Project
                     // Verifica si la celda actual es la posición del Jugador 1
                     if (i == jugador1.PosicionActual.Row && j == jugador1.PosicionActual.Col)
                     {
-                            Console.Write("⚪ "); // Imprime al Jugador 1
+                        Console.Write("⚪ "); // Imprime al Jugador 1
                     }
                     // Verifica si la celda actual es la posición del Jugador 2
                     else if (i == jugador2.PosicionActual.Row && j == jugador2.PosicionActual.Col)
                     {
-                            Console.Write("⚫ "); // Imprime al Jugador 2
+                        Console.Write("⚫ "); // Imprime al Jugador 2
                     }
                     else
                     {
-                        Console.Write(mapa[i, j]); 
+                        Console.Write(mapa[i, j]);
                     }
                 }
-                Console.WriteLine(); 
+                Console.WriteLine();
             }
 
             // Imprime las posiciones de los jugadores
             jugador1.ImprimirPosicion();
             jugador2.ImprimirPosicion();
         }
-        
+
         public bool MoverJugador(int idJugador)
         {
             // Obtener la posición actual del jugador
@@ -229,12 +236,12 @@ namespace Project
                 ? (jugador1.PosicionActual.Row, jugador1.PosicionActual.Col)
                 : (jugador2.PosicionActual.Row, jugador2.PosicionActual.Col);
 
-            if(idJugador==1)
+            if (idJugador == 1)
             {
                 // Solicitar al usuario que ingrese una tecla (W, A, S, D)
                 Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (W: Arriba, A: Izquierda, S: Abajo, D: Derecha), G para activar su habilidad o Q para salir:");
             }
-            else if (idJugador==2)
+            else if (idJugador == 2)
             {
                 Console.WriteLine($"Mover Jugador {idJugador}. Ingrese una tecla (I: Arriba, J: Izquierda, K: Abajo, L: Derecha) G para activar su habilidad o Q para salir:");
             }
@@ -253,13 +260,13 @@ namespace Project
                 Environment.Exit(0); // Salir del juego
             }
 
-            switch(idJugador)
+            switch (idJugador)
             {
                 case 1:
                     switch (char.ToUpper(tecla))
                     {
                         case 'G': // Activar habilidad del jugador 1
-                            if(jugador1.HabilidadDisponible==true)
+                            if (jugador1.HabilidadDisponible == true)
                             {
                                 jugador1.ActivarHabilidad();
                                 jugador1.TurnosHastaHabilidad += 5;
@@ -267,13 +274,16 @@ namespace Project
                             else
                             {
                                 Console.WriteLine("La habilidad no está disponible en este momento. Vuelva a intentar pasados 5 turnos");
+                                Console.ReadLine();
+                                Console.Clear();
+                                PrintMaze();
                             }
                             return false;
                         case 'W': // Arriba
                             newRow--;
                             break;
                         case 'A': // Izquierda
-                            newCol--; 
+                            newCol--;
                             break;
                         case 'S': // Abajo
                             newRow++;
@@ -283,9 +293,12 @@ namespace Project
                             break;
                         default:
                             Console.WriteLine("Tecla inválida. Use W, A, S, D o G.");
-                            return MoverJugador(idJugador);                    
+                            Console.ReadLine();
+                            Console.Clear();
+                            PrintMaze();
+                            return MoverJugador(idJugador);
                     }
-                break;
+                    break;
 
                 case 2:
                     switch (char.ToUpper(tecla))
@@ -300,8 +313,11 @@ namespace Project
                             else
                             {
                                 Console.WriteLine("La habilidad no está disponible en este momento. Vuelva a intentar pasados 5 turnos");
+                                Console.ReadLine();
+                                Console.Clear();
+                                PrintMaze();
                             }
-                             return false;
+                            return false;
                         case 'I': // Arriba
                             newRow--;
                             break;
@@ -315,16 +331,22 @@ namespace Project
                             newCol++;
                             break;
                         default:
-                        Console.WriteLine("Tecla inválida. Use I, J, K, L o G.");
-                        return MoverJugador(idJugador);
+                            Console.WriteLine("Tecla inválida. Use I, J, K, L o G.");
+                            Console.ReadLine();
+                            Console.Clear();
+                            PrintMaze();
+                            return MoverJugador(idJugador);
                     }
-                break;
+                    break;
             }
-                
+
             // Verificar si la nueva posición está dentro de los límites del laberinto
             if (newRow < 0 || newRow >= Rows || newCol < 0 || newCol >= Cols)
             {
                 Console.WriteLine("Movimiento inválido: Fuera de los límites del laberinto.");
+                Console.ReadLine();
+                Console.Clear();
+                PrintMaze();
                 return MoverJugador(idJugador);
             }
 
@@ -332,9 +354,12 @@ namespace Project
             if (mapa[newRow, newCol] == "⬜ ")
             {
                 Console.WriteLine("Movimiento inválido: No puedes moverte a una pared.");
+                Console.ReadLine();
+                Console.Clear();
+                PrintMaze();
                 return MoverJugador(idJugador);
             }
-        
+
             if (mapa[newRow, newCol] == "💎 ")
             {
                 // Recoger el diamante
@@ -351,15 +376,18 @@ namespace Project
                 mapa[newRow, newCol] = "   ";
                 return false;
             }
-            
+
             if (mapa[newRow, newCol] == "🧨 ")
             {
                 PrintMaze();
                 Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
+                Console.ReadLine();
+                Console.Clear();
+                PrintMaze();
                 if (idJugador == 1)
                 {
                     jugador1.CaerTrampa();
-                    for (int i = 0; i < jugador2.Velocidad;i++)
+                    for (int i = 0; i < jugador2.Velocidad; i++)
                     {
                         MoverJugador(2);
                     }
@@ -367,12 +395,12 @@ namespace Project
                 else if (idJugador == 2)
                 {
                     jugador2.CaerTrampa();
-                    for(int i = 0; i < jugador1.Velocidad; i++)
+                    for (int i = 0; i < jugador1.Velocidad; i++)
                     {
-                        MoverJugador(1);  
-                    }            
+                        MoverJugador(1);
+                    }
                 }
-                mapa[newRow,newCol] = "   ";
+                mapa[newRow, newCol] = "   ";
                 return false;
             }
 
@@ -407,27 +435,27 @@ namespace Project
             while (true) // Bucle infinito hasta que el usuario decida salir
             {
                 bool JuegoTerminado = false;
-                while(!JuegoTerminado)
-                {   
-                    for(int i = 0; i < jugador1.Velocidad;i++)
+                while (!JuegoTerminado)
+                {
+                    for (int i = 0; i < jugador1.Velocidad; i++)
                     {
-                        if(MoverJugador(1)==true)
+                        if (MoverJugador(1) == true)
                         {
                             JuegoTerminado = true; // Victoria del Jugador 1
-                            break;       
-                        }   
+                            break;
+                        }
                     }
 
-                    for(int i = 0; i < jugador2.Velocidad; i++)
+                    for (int i = 0; i < jugador2.Velocidad; i++)
                     {
-                        
-                        if ( MoverJugador(2)==true)
+
+                        if (MoverJugador(2) == true)
                         {
                             JuegoTerminado = true; // Victoria del Jugador 2
-                            break; 
-                        }    
+                            break;
+                        }
                     }
-                }   
+                }
             }
         }
 
@@ -464,7 +492,7 @@ namespace Project
             return mapa[fila, columna] == "⬜ ";
         }
 
-        public bool HayTrampa(int fila,int columna)
+        public bool HayTrampa(int fila, int columna)
         {
             // Verificar si la posición está dentro de los límites del laberinto
             if (fila < 0 || fila >= Rows || columna < 0 || columna >= Cols)
@@ -475,6 +503,6 @@ namespace Project
             // Verificar si hay una trampa en la posición
             return mapa[fila, columna] == "🧨 ";
         }
-        
+
     }
 }
