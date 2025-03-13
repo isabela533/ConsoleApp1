@@ -33,6 +33,7 @@ namespace Project
         {
             Console.WriteLine($"Bienvenidos al {NameGame}");
             Console.WriteLine("Por favor, escriba el numero del personaje que desea para el jugador 1:");
+            Console.WriteLine("Nota: Su ficha es => ⚪ Meta correspondiente => 🏳️");
             Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes        Velocidad: 4 casillas");
             Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas        Velocidad: 5 casillas");
             Console.WriteLine("3. Personaje 3  Habilidad: No tiene              Velocidad: 8 casillas");
@@ -75,11 +76,12 @@ namespace Project
 
 
             Console.WriteLine("Por favor, escriba el numero del personaje que desea para el jugador 2:");
-            Console.WriteLine("1. Personaje 1");
-            Console.WriteLine("2. Personaje 2");
-            Console.WriteLine("3. Personaje 3");
-            Console.WriteLine("4. Personaje 4");
-            Console.WriteLine("5. Personaje 5");
+            Console.WriteLine("Nota: Su ficha es => ⚫ Meta correspondiente => 🏴");
+            Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes        Velocidad: 4 casillas");
+            Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas        Velocidad: 5 casillas");
+            Console.WriteLine("3. Personaje 3  Habilidad: No tiene              Velocidad: 8 casillas");
+            Console.WriteLine("4. Personaje 4  Habilidad: Sumarse un diamante   Velocidad: 4 casillas");
+            Console.WriteLine("5. Personaje 5  Habilidad: No tiene              Velocidad: 10 casillas");
 
             int opcion2;
             while (true)
@@ -194,10 +196,10 @@ namespace Project
             Console.Clear();
             Console.WriteLine("Las reglas del juego son las siguientes:");
             Console.WriteLine("1. Cada jugador debe recoger 10 diamantes y llevarlos hacia la meta que le corresponde. El primer jugador que lo logre, gana");
-            Console.WriteLine("2. Evite las trampas ya que estas hacen que pierda 2 turnos");
+            Console.WriteLine("2. Evite las trampas ya que estas hacen que pierda 1 turno, y cuando le toque nuevamente su turno solo avanzara las casillas restantes que le faltaban por completar antes de coger la trampa");
             Console.WriteLine("3. Puede usar su habilidad en el momento que lo desee pulsando la tecla 'G'");
             Console.WriteLine("4. Una vez utilizada su habilidad, no podra usarla nuevamente por los siguientes 5 tunos");
-            Console.WriteLine("5. Cuando veas una frase presiona Enter");
+            Console.WriteLine("5. Cuando veas una comentario presiona Enter");
             Console.WriteLine("Ahora si, que comience el juego!!");
             Console.WriteLine();
 
@@ -366,27 +368,31 @@ namespace Project
                 if (idJugador == 1)
                 {
                     jugador1.RecogerDiamante();
+                    jugador1.Mover(newRow,newCol);
                 }
                 else if (idJugador == 2)
                 {
                     jugador2.RecogerDiamante();
+                    jugador2.Mover(newRow,newCol);
                 }
 
                 // Limpiar la posición del diamante en el mapa
                 mapa[newRow, newCol] = "   ";
+                PrintMaze();
                 return false;
             }
 
             if (mapa[newRow, newCol] == "🧨 ")
             {
-                PrintMaze();
                 Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
                 Console.ReadLine();
                 Console.Clear();
                 PrintMaze();
                 if (idJugador == 1)
                 {
+                    jugador1.Mover(newRow,newCol);
                     jugador1.CaerTrampa();
+
                     for (int i = 0; i < jugador2.Velocidad; i++)
                     {
                         MoverJugador(2);
@@ -394,6 +400,7 @@ namespace Project
                 }
                 else if (idJugador == 2)
                 {
+                    jugador2.Mover(newRow,newCol);
                     jugador2.CaerTrampa();
                     for (int i = 0; i < jugador1.Velocidad; i++)
                     {
@@ -401,6 +408,7 @@ namespace Project
                     }
                 }
                 mapa[newRow, newCol] = "   ";
+                PrintMaze();
                 return false;
             }
 
