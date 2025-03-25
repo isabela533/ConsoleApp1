@@ -1,3 +1,5 @@
+using System.ComponentModel.Design;
+using System.Data;
 using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -7,6 +9,7 @@ namespace Project
 {
     public abstract class Jugador
     {
+        //public static Jugador JugadorActual { get; set; }
         public int Id { get; set; } // Identificador del jugador
         public (int Row, int Col) PosicionInicial { get; } // Posición inicial del jugador
         public (int Row, int Col) PosicionActual { get; set; } // Posición actual del jugador
@@ -139,7 +142,7 @@ namespace Project
                 // Mover al jugador a la nueva posición
                 PosicionActual = (nuevaFila, nuevaColumna);
                 HabilidadDisponible = false;
-                laberinto.ResetearHabilidad();
+                //laberinto.ResetearHabilidad();
             }
             else
             {
@@ -224,7 +227,7 @@ namespace Project
                 // Saltar la trampa
                 PosicionActual = (nuevaFila, nuevaColumna);
                 HabilidadDisponible = false;
-                laberinto.ResetearHabilidad();
+                //laberinto.ResetearHabilidad();
             }
             else
             {
@@ -269,21 +272,41 @@ namespace Project
             Console.WriteLine("Has activado la habilidad de sumarse un diamante a su contador");
             DiamantesRecogidos += 2;
             HabilidadDisponible = false;
-            laberinto.ResetearHabilidad();
+            //laberinto.ResetearHabilidad();
         }
     }
 
     public class Personaje5 : Jugador
     {
+        //private MazeGenerator laberinto;
         public override int Velocidad => 10;
         public Personaje5(int id, int row, int col) : base(id, row, col)
         {
             Console.WriteLine("Has elegido al personaje 5");
+            //this.laberinto = laberinto;
         }
 
         public Personaje5((int id, int row, int col) vector) : base(vector)
         {
             Console.WriteLine("Has elegido al personaje 5");
+            //this.laberinto = laberinto;
         }
+
+       //public override void ActivarHabilidad()
+       // {
+            //Console.WriteLine("Has activado la habilidad de restarle dos diamantes a su oponente");
+            //if(JugadorActual.Id == 2)
+            //{
+              //  laberinto.jugador2.DiamantesRecogidos -= 2;
+
+            //}
+            //else
+            //{
+              // laberinto.jugador1.DiamantesRecogidos -= 2;
+            //}
+
+            //HabilidadDisponible = false;
+       // }
+    
     }
 }

@@ -67,7 +67,7 @@ namespace Project
                     jugador1 = new Personaje4(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 5:
-                    jugador1 = new Personaje5(poss1); // Posición inicial del jugador 1
+                    jugador1 = new Personaje5(poss1);//, this); // Posición inicial del jugador 1
                     break;
                 default:
                     Console.WriteLine("Opción inválida");
@@ -110,7 +110,7 @@ namespace Project
                     jugador2 = new Personaje4(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 5:
-                    jugador2 = new Personaje5(poss2); // Posición inicial del jugador 2
+                    jugador2 = new Personaje5(poss2);//, this); // Posición inicial del jugador 2
                     break;
                 default:
                     Console.WriteLine("Opción inválida");
@@ -129,10 +129,10 @@ namespace Project
             GenerarLaberinto(1, 1);
             mapa[33, 1] = "🏳️ "; // meta del jugador 1
             mapa[33, 33] = "🏴 "; // meta del jugador 2
-            ColocarFichasDeRecompensa(20, 8);
+            ColocarFichasDeRecompensa(20, 4, 4, 3);
         }
 
-        public void ColocarFichasDeRecompensa(int cantidadFichas, int cantidadTrampas)
+        public void ColocarFichasDeRecompensa(int cantidadFichas, int cantidadTrampas1, int cantidadTrampas2, int cantidadTrampas3)
         {
             Random random = new Random();
             int filas = mapa.GetLength(0);
@@ -150,7 +150,8 @@ namespace Project
 
                 mapa[fila, columna] = "💎 ";
             }
-            for (int i = 0; i < cantidadTrampas; i++)
+            
+            for (int i = 0; i < cantidadTrampas1; i++)
             {
                 int fila, columna;
                 do
@@ -160,6 +161,30 @@ namespace Project
                 } while ((mapa[fila, columna] != "   ") || (fila == 1 && columna == 1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
 
                 mapa[fila, columna] = "🧨 ";
+            }
+            
+            for (int i = 0; i < cantidadTrampas2; i++)
+            {
+                int fila, columna;
+                do
+                {
+                    fila = random.Next(1, filas - 1);
+                    columna = random.Next(1, columnas - 1);
+                } while ((mapa[fila, columna] != "   ") || (fila == 1 && columna == 1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
+
+                mapa[fila, columna] = "👿 ";
+            }
+             
+            for (int i = 0; i < cantidadTrampas2; i++)
+            {
+                int fila, columna;
+                do
+                {
+                    fila = random.Next(1, filas - 1);
+                    columna = random.Next(1, columnas - 1);
+                } while ((mapa[fila, columna] != "   ") || (fila == 1 && columna == 1) || (fila == 1 && columna == 33)); // Asegurarse que el espacio esté vacío
+
+                mapa[fila, columna] = "☠️  ";
             }
         }
         
@@ -196,10 +221,10 @@ namespace Project
             Console.Clear();
             Console.WriteLine("Las reglas del juego son las siguientes:");
             Console.WriteLine("1. Cada jugador debe recoger 10 diamantes y llevarlos hacia la meta que le corresponde. El primer jugador que lo logre, gana");
-            Console.WriteLine("2. Evite las trampas ya que estas hacen que pierda 1 turno, y cuando le toque nuevamente su turno solo avanzara las casillas restantes que le faltaban por completar antes de coger la trampa");
-            Console.WriteLine("3. Puede usar su habilidad en el momento que lo desee pulsando la tecla 'G'");
-            Console.WriteLine("4. Una vez utilizada su habilidad, no podra usarla nuevamente por los siguientes 5 tunos");
-            Console.WriteLine("5. Cuando veas una comentario presiona Enter");
+            Console.WriteLine("2. Puede usar su habilidad en el momento que lo desee pulsando la tecla 'G'");
+            Console.WriteLine("3. Una vez utilizada su habilidad, no podra usarla nuevamente por los siguientes 5 tunos");
+            Console.WriteLine("4. Cuando veas una comentario presiona Enter");
+            Console.WriteLine("OJO: Hay tres tipos de trampas: pueden hacer que pierda su turno, o que lo devuelva a su posicion inicial e incluso se le puede disminuir su cantidad de diamantes");
             Console.WriteLine("Ahora si, que comience el juego!!");
             Console.WriteLine();
 
@@ -362,6 +387,7 @@ namespace Project
                 return MoverJugador(idJugador);
             }
 
+            //Efecto de los diamantes
             if (mapa[newRow, newCol] == "💎 ")
             {
                 // Recoger el diamante
@@ -381,7 +407,8 @@ namespace Project
                 PrintMaze();
                 return false;
             }
-
+            
+            //Efecto de la trampa 1 : saltar truno
             if (mapa[newRow, newCol] == "🧨 ")
             {
                 Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
@@ -392,6 +419,7 @@ namespace Project
                 {
                     jugador1.Mover(newRow,newCol);
                     jugador1.CaerTrampa();
+                    PrintMaze();
 
                     for (int i = 0; i < jugador2.Velocidad; i++)
                     {
@@ -412,6 +440,78 @@ namespace Project
                 return false;
             }
 
+            //Efecto de la trampa 2: diamantes recogidos - 2
+            if(mapa[newRow, newCol]== "👿 ")
+            {
+                //jugador 1 
+                if (idJugador == 1 && jugador1.DiamantesRecogidos < 2)
+                {
+                    jugador1.Mover(newRow,newCol);
+                    jugador1.CaerTrampa();
+                    PrintMaze();
+                    Console.WriteLine("Ha caido en una trampa, se pasa el turno al otro jugador");
+                    
+                    for (int i = 0; i < jugador2.Velocidad; i++)
+                    {
+                        MoverJugador(2);
+                    }
+                }
+                else if (idJugador == 1 && jugador1.DiamantesRecogidos >= 2)
+                {
+                    jugador1.Mover(newRow,newCol);
+                    jugador1.CaerTrampa();
+                    Console.WriteLine("Ha caido en una trampa, pierde dos diamantes");
+                    PrintMaze();
+                    
+                    //restarle dos diamantes
+                    jugador1.DiamantesRecogidos -= 2;
+                }
+
+                //jugador 2
+                if (idJugador == 2 && jugador2.DiamantesRecogidos < 2)
+                {
+                    jugador2.Mover(newRow,newCol);
+                    jugador2.CaerTrampa();
+                    PrintMaze();
+                    Console.WriteLine("Ha caido en una trampa, se pasa el turno al otro jugador");
+
+                    for (int i = 0; i < jugador1.Velocidad; i++)
+                    {
+                        MoverJugador(1);
+                    }
+                }
+                else if (idJugador == 2 && jugador2.DiamantesRecogidos >= 2)
+                {
+                    jugador2.Mover(newRow,newCol);
+                    jugador2.CaerTrampa();
+                    Console.WriteLine("Ha caido en una trampa, pierde dos diamantes");
+                    PrintMaze();
+                    //restarle dos diamantes
+                    jugador2.DiamantesRecogidos -= 2;
+                }
+
+                mapa [newRow,newCol] = "   ";
+                PrintMaze();
+                return false;
+            }
+
+            //Efecto de la trampa 3: te coloca nuevamente en la entrada  
+            if(mapa[newRow, newCol] == "☠️  ")
+            {
+                Console.WriteLine("Has caido en una trampa, vuelves a la posicion inicial");
+                if(idJugador==1)
+                {
+                    jugador1.Mover(1,1);
+                }
+                else if (idJugador == 2)
+                {
+                    jugador2.Mover(1,33);
+                }
+                mapa[newRow, newCol] = "   ";
+                PrintMaze();
+                return false;
+            }
+            
             // Mover al jugador a la nueva posición
             if (idJugador == 1)
             {
@@ -435,6 +535,7 @@ namespace Project
 
             // Imprimir el laberinto actualizado
             PrintMaze();
+            //ResetearHabilidad();
 
             return false;
         }
@@ -463,26 +564,29 @@ namespace Project
                             break;
                         }
                     }
+                    ResetearHabilidad();
                 }
             }
         }
 
         public void ResetearHabilidad()
         {
-            if (!jugador1.HabilidadDisponible)
+            if (jugador1.HabilidadDisponible == false)
             {
                 jugador1.TurnosHastaHabilidad--;
-                if (jugador1.TurnosHastaHabilidad == 0)
+                if (jugador1.TurnosHastaHabilidad <= 0)
                 {
+                    Console.WriteLine("Se restauro la habilidad del jugador 1");
                     jugador1.HabilidadDisponible = true;
                 }
             }
 
-            if (!jugador2.HabilidadDisponible)
+            if (jugador2.HabilidadDisponible == false)
             {
                 jugador2.TurnosHastaHabilidad--;
-                if (jugador2.TurnosHastaHabilidad == 0)
+                if (jugador2.TurnosHastaHabilidad <= 0)
                 {
+                    Console.WriteLine("Se restauro la habilidad del jugador 2");
                     jugador2.HabilidadDisponible = true;
                 }
             }
@@ -509,7 +613,12 @@ namespace Project
             }
 
             // Verificar si hay una trampa en la posición
-            return mapa[fila, columna] == "🧨 ";
+            if (mapa[fila, columna] == "🧨 " || mapa[fila,columna]=="👿 " || mapa[fila,columna] == "☠️  ")
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }
