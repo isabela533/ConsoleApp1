@@ -5,7 +5,7 @@ namespace Project
     {
         #region Variables
         private string NameGame;
-        private string[,] mapa;
+        public string[,] mapa;
         public int Rows;
         public int Cols;
         private Random random;
@@ -34,11 +34,11 @@ namespace Project
             Console.WriteLine($"Bienvenidos al {NameGame}");
             Console.WriteLine("Por favor, escriba el numero del personaje que desea para el jugador 1:");
             Console.WriteLine("Nota: Su ficha es => ⚪ Meta correspondiente => 🏳️");
-            Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes        Velocidad: 4 casillas");
-            Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas        Velocidad: 5 casillas");
-            Console.WriteLine("3. Personaje 3  Habilidad: No tiene              Velocidad: 8 casillas");
-            Console.WriteLine("4. Personaje 4  Habilidad: Sumarse un diamante   Velocidad: 4 casillas");
-            Console.WriteLine("5. Personaje 5  Habilidad: No tiene              Velocidad: 10 casillas");
+            Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes                                                      Velocidad: 4 casillas");
+            Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas                                                      Velocidad: 5 casillas");
+            Console.WriteLine("3. Personaje 3  Habilidad: Cambiar su cantidad de diamantes por la de su oponente              Velocidad: 8 casillas");
+            Console.WriteLine("4. Personaje 4  Habilidad: Sumarse dos diamantes                                                 Velocidad: 4 casillas");
+            Console.WriteLine("5. Personaje 5  Habilidad: Habilidad: Intercambiar posicion con su oponente                    Velocidad: 10 casillas");
 
             int opcion1;
             while (true)
@@ -61,13 +61,13 @@ namespace Project
                     jugador1 = new Personaje2(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 3:
-                    jugador1 = new Personaje3(poss1); // Posición inicial del jugador 1
+                    jugador1 = new Personaje3(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 4:
                     jugador1 = new Personaje4(poss1, this); // Posición inicial del jugador 1
                     break;
                 case 5:
-                    jugador1 = new Personaje5(poss1);//, this); // Posición inicial del jugador 1
+                    jugador1 = new Personaje5(poss1, this);//, this); // Posición inicial del jugador 1
                     break;
                 default:
                     Console.WriteLine("Opción inválida");
@@ -77,11 +77,11 @@ namespace Project
 
             Console.WriteLine("Por favor, escriba el numero del personaje que desea para el jugador 2:");
             Console.WriteLine("Nota: Su ficha es => ⚫ Meta correspondiente => 🏴");
-            Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes        Velocidad: 4 casillas");
-            Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas        Velocidad: 5 casillas");
-            Console.WriteLine("3. Personaje 3  Habilidad: No tiene              Velocidad: 8 casillas");
-            Console.WriteLine("4. Personaje 4  Habilidad: Sumarse un diamante   Velocidad: 4 casillas");
-            Console.WriteLine("5. Personaje 5  Habilidad: No tiene              Velocidad: 10 casillas");
+            Console.WriteLine("1. Personaje 1  Habilidad: Saltar paredes                                                      Velocidad: 4 casillas");
+            Console.WriteLine("2. Personaje 2  Habilidad: Saltar trampas                                                      Velocidad: 5 casillas");
+            Console.WriteLine("3. Personaje 3  Habilidad: Cambiar su cantidad de diamantes por la de su oponente              Velocidad: 8 casillas");
+            Console.WriteLine("4. Personaje 4  Habilidad: Sumarse dos diamante                                                Velocidad: 4 casillas");
+            Console.WriteLine("5. Personaje 5  Habilidad: Intercambiar posicion con su oponente                               Velocidad: 10 casillas");
 
             int opcion2;
             while (true)
@@ -104,13 +104,13 @@ namespace Project
                     jugador2 = new Personaje2(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 3:
-                    jugador2 = new Personaje3(poss2); // Posición inicial del jugador 2
+                    jugador2 = new Personaje3(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 4:
                     jugador2 = new Personaje4(poss2, this); // Posición inicial del jugador 2
                     break;
                 case 5:
-                    jugador2 = new Personaje5(poss2);//, this); // Posición inicial del jugador 2
+                    jugador2 = new Personaje5(poss2, this);//, this); // Posición inicial del jugador 2
                     break;
                 default:
                     Console.WriteLine("Opción inválida");
@@ -218,7 +218,6 @@ namespace Project
 
         public void PrintMaze()
         {
-            Console.Clear();
             Console.WriteLine("Las reglas del juego son las siguientes:");
             Console.WriteLine("1. Cada jugador debe recoger 10 diamantes y llevarlos hacia la meta que le corresponde. El primer jugador que lo logre, gana");
             Console.WriteLine("2. Puede usar su habilidad en el momento que lo desee pulsando la tecla 'G'");
@@ -411,16 +410,17 @@ namespace Project
             //Efecto de la trampa 1 : saltar truno
             if (mapa[newRow, newCol] == "🧨 ")
             {
-                Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
-                Console.ReadLine();
-                Console.Clear();
-                PrintMaze();
                 if (idJugador == 1)
                 {
                     jugador1.Mover(newRow,newCol);
                     jugador1.CaerTrampa();
                     PrintMaze();
-
+                    
+                    Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
+                    
                     for (int i = 0; i < jugador2.Velocidad; i++)
                     {
                         MoverJugador(2);
@@ -430,6 +430,13 @@ namespace Project
                 {
                     jugador2.Mover(newRow,newCol);
                     jugador2.CaerTrampa();
+                    PrintMaze();
+                    
+                    Console.WriteLine("¡Has caído en una trampa! Pierdes tu turno.");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
+
                     for (int i = 0; i < jugador1.Velocidad; i++)
                     {
                         MoverJugador(1);
@@ -449,7 +456,11 @@ namespace Project
                     jugador1.Mover(newRow,newCol);
                     jugador1.CaerTrampa();
                     PrintMaze();
+                    
                     Console.WriteLine("Ha caido en una trampa, se pasa el turno al otro jugador");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
                     
                     for (int i = 0; i < jugador2.Velocidad; i++)
                     {
@@ -460,7 +471,11 @@ namespace Project
                 {
                     jugador1.Mover(newRow,newCol);
                     jugador1.CaerTrampa();
+                    PrintMaze();
+                    
                     Console.WriteLine("Ha caido en una trampa, pierde dos diamantes");
+                    Console.ReadLine();
+                    Console.Clear();
                     PrintMaze();
                     
                     //restarle dos diamantes
@@ -473,7 +488,11 @@ namespace Project
                     jugador2.Mover(newRow,newCol);
                     jugador2.CaerTrampa();
                     PrintMaze();
+                    
                     Console.WriteLine("Ha caido en una trampa, se pasa el turno al otro jugador");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
 
                     for (int i = 0; i < jugador1.Velocidad; i++)
                     {
@@ -484,8 +503,12 @@ namespace Project
                 {
                     jugador2.Mover(newRow,newCol);
                     jugador2.CaerTrampa();
-                    Console.WriteLine("Ha caido en una trampa, pierde dos diamantes");
                     PrintMaze();
+                    Console.WriteLine("Ha caido en una trampa, pierde dos diamantes");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
+
                     //restarle dos diamantes
                     jugador2.DiamantesRecogidos -= 2;
                 }
@@ -498,7 +521,12 @@ namespace Project
             //Efecto de la trampa 3: te coloca nuevamente en la entrada  
             if(mapa[newRow, newCol] == "☠️  ")
             {
+                PrintMaze();
                 Console.WriteLine("Has caido en una trampa, vuelves a la posicion inicial");
+                Console.ReadLine();
+                Console.Clear();
+                PrintMaze();
+                
                 if(idJugador==1)
                 {
                     jugador1.Mover(1,1);
@@ -524,12 +552,17 @@ namespace Project
 
             if (idJugador == 1 && newRow == metaJugador1.Row && newCol == metaJugador1.Col && jugador1.DiamantesRecogidos >= 10)
             {
+                PrintMaze();
                 Console.WriteLine("¡Felicidades! El Jugador 1 ha llegado a su meta.");
+                Console.ReadLine();
+                PrintMaze();
                 return true; // Victoria del Jugador 1
             }
             else if (idJugador == 2 && newRow == metaJugador2.Row && newCol == metaJugador2.Col && jugador2.DiamantesRecogidos >= 10)
             {
                 Console.WriteLine("¡Felicidades! El Jugador 2 ha llegado a su meta.");
+                Console.ReadLine();
+                PrintMaze();
                 return true; // Victoria del Jugador 2
             }
 
@@ -551,7 +584,7 @@ namespace Project
                         if (MoverJugador(1) == true)
                         {
                             JuegoTerminado = true; // Victoria del Jugador 1
-                            break;
+                            Environment.Exit(0);
                         }
                     }
 
@@ -561,7 +594,7 @@ namespace Project
                         if (MoverJugador(2) == true)
                         {
                             JuegoTerminado = true; // Victoria del Jugador 2
-                            break;
+                            Environment.Exit(0);
                         }
                     }
                     ResetearHabilidad();
@@ -577,6 +610,9 @@ namespace Project
                 if (jugador1.TurnosHastaHabilidad <= 0)
                 {
                     Console.WriteLine("Se restauro la habilidad del jugador 1");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
                     jugador1.HabilidadDisponible = true;
                 }
             }
@@ -587,6 +623,9 @@ namespace Project
                 if (jugador2.TurnosHastaHabilidad <= 0)
                 {
                     Console.WriteLine("Se restauro la habilidad del jugador 2");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
                     jugador2.HabilidadDisponible = true;
                 }
             }

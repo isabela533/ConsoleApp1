@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Diagnostics;
@@ -9,7 +10,6 @@ namespace Project
 {
     public abstract class Jugador
     {
-        //public static Jugador JugadorActual { get; set; }
         public int Id { get; set; } // Identificador del jugador
         public (int Row, int Col) PosicionInicial { get; } // Posición inicial del jugador
         public (int Row, int Col) PosicionActual { get; set; } // Posición actual del jugador
@@ -88,7 +88,7 @@ namespace Project
         public override void ActivarHabilidad()
         {
             Console.WriteLine("Has activado la habilidad de saltar paredes");
-            Console.WriteLine("Ingrese hacia qué dirección le gustaría saltar (W: Arriba, S: Abajo, A: Izquierda, D: Derecha):");
+            Console.WriteLine("Ingrese hacia qué dirección le gustaría saltar (W: Arriba, S: Abajo, A: Izquierda, D: Derecha o G: para salir de la habilidad):");
             char direccion = Console.ReadKey().KeyChar;
 
             // Obtener la posición actual del jugador
@@ -117,16 +117,22 @@ namespace Project
                 case 'D': // Derecha
                     nuevaColumna += 2;
                     break;
-
+                case 'G': //salir de la habilidad 
+                    Console.WriteLine("Saliste de la habilidad ");
+                    break;
                 default:
                     Console.WriteLine("Dirección inválida.");
+                    ActivarHabilidad();
                     return;
+
             }
 
             // Verificar si la nueva posición está dentro de los límites del laberinto
             if (nuevaFila < 0 || nuevaFila >= laberinto.Rows || nuevaColumna < 0 || nuevaColumna >= laberinto.Cols)
             {
                 Console.WriteLine("No puedes saltar fuera de los límites del laberinto.");
+                Console.ReadLine();
+                ActivarHabilidad();
                 return;
             }
 
@@ -134,6 +140,22 @@ namespace Project
             if (laberinto.HayPared(nuevaFila, nuevaColumna))
             {
                 Console.WriteLine("Por favor, salte hacia un lugar donde haya un espacio vacio");
+                Console.ReadLine();
+                ActivarHabilidad();
+            }
+
+            if(laberinto.mapa[nuevaFila,nuevaColumna] == "💎 ")
+            {
+                RecogerDiamante();
+                laberinto.mapa[nuevaFila,nuevaColumna] = "   ";
+                laberinto.PrintMaze();
+            }
+
+            if(laberinto.HayTrampa(nuevaFila,nuevaColumna))
+            {
+                Console.WriteLine("No puedes saltar hacia una trampa");
+                Console.ReadLine();
+                ActivarHabilidad();
             }
 
             // Verificar si hay una pared en la dirección seleccionada
@@ -142,11 +164,16 @@ namespace Project
                 // Mover al jugador a la nueva posición
                 PosicionActual = (nuevaFila, nuevaColumna);
                 HabilidadDisponible = false;
-                //laberinto.ResetearHabilidad();
             }
             else
             {
-                Console.WriteLine("No hay una pared en esa dirección.");
+                if(direccion == 'g')
+                    Console.ReadLine();
+                else
+                {
+                    Console.WriteLine("No hubo una pared en esa dirección.");
+                    Console.ReadLine();
+                }
             }
 
             laberinto.PrintMaze();
@@ -174,7 +201,7 @@ namespace Project
         public override void ActivarHabilidad()
         {
             Console.WriteLine("Has activado la habilidad de saltar trampas");
-            Console.WriteLine("Ingrese hacia qué dirección le gustaría saltar (W: Arriba, S: Abajo, A: Izquierda, D: Derecha):");
+            Console.WriteLine("Ingrese hacia qué dirección le gustaría saltar (W: Arriba, S: Abajo, A: Izquierda, D: Derecha o G para salir de la habilidad):");
             char direccion = Console.ReadKey().KeyChar;
 
             // Obtener la posición actual del jugador
@@ -203,9 +230,12 @@ namespace Project
                 case 'D': // Derecha
                     nuevaColumna += 2;
                     break;
-
+                case 'G':
+                    Console.WriteLine("Saliste de la habilidad");
+                    break;
                 default:
                     Console.WriteLine("Dirección inválida.");
+                    ActivarHabilidad();
                     return;
             }
 
@@ -213,12 +243,30 @@ namespace Project
             if (nuevaFila < 0 || nuevaFila >= laberinto.Rows || nuevaColumna < 0 || nuevaColumna >= laberinto.Cols)
             {
                 Console.WriteLine("No puedes saltar fuera de los límites del laberinto.");
+                Console.ReadLine();
+                ActivarHabilidad();
                 return;
             }
 
             if (laberinto.HayPared(nuevaFila, nuevaColumna))
             {
                 Console.WriteLine("Por favor, salte hacia un lugar donde haya un espacio vacio");
+                Console.ReadLine();
+                ActivarHabilidad();
+            }
+
+            if(laberinto.mapa[nuevaFila,nuevaColumna] == "💎 ")
+            {
+                RecogerDiamante();
+                laberinto.mapa[nuevaFila,nuevaColumna] = "   ";
+                laberinto.PrintMaze();
+            }
+
+            if(laberinto.HayTrampa(nuevaFila, nuevaColumna))
+            {
+                Console.WriteLine(" No puedes saltar, dado que hay dos trampas");
+                Console.ReadLine();
+                ActivarHabilidad();
             }
 
             // Verificar si hay una trampa en la nueva posición
@@ -227,11 +275,16 @@ namespace Project
                 // Saltar la trampa
                 PosicionActual = (nuevaFila, nuevaColumna);
                 HabilidadDisponible = false;
-                //laberinto.ResetearHabilidad();
             }
             else
             {
-                Console.WriteLine("No hay una trampa en esa dirección.");
+                if(direccion == 'g')
+                    Console.ReadLine();
+                else
+                {
+                    Console.WriteLine("No hay una trampa en esa dirección.");
+                    Console.ReadLine();
+                }
             }
             laberinto.PrintMaze();
         }
@@ -239,16 +292,46 @@ namespace Project
 
     public class Personaje3 : Jugador
     {
+        private MazeGenerator laberinto;
         public override int Velocidad => 8;
-        public Personaje3(int id, int row, int col) : base(id, row, col)
+        public Personaje3(int id, int row, int col, MazeGenerator laberinto) : base(id, row, col)
         {
             Console.WriteLine("Has elegido al Personaje 3");
+            this.laberinto = laberinto;
+            Id = id;
         }
 
-        public Personaje3((int id, int row, int col) vector) : base(vector)
+        public Personaje3((int id, int row, int col) vector, MazeGenerator laberinto) : base(vector)
         {
             Console.WriteLine("Has elegido al Personaje 3");
+            this.laberinto = laberinto;
+            Id = vector.id;
         }
+    
+        public override void ActivarHabilidad ()
+        {
+            Console.WriteLine("Has activado la habilidad de intercambiar diamantes con su oponente");
+            Console.ReadLine();
+
+            int diamantesJugador1 = laberinto.jugador1.DiamantesRecogidos;
+            int diamantesJugador2 = laberinto.jugador2.DiamantesRecogidos;
+
+            if (Id == 1 && diamantesJugador2 <= 0 || Id == 2 && diamantesJugador1 <= 0)
+            {
+                Console.WriteLine("Su oponente aun no posee diamantes");
+                Console.ReadLine();
+            }
+
+            if (Id == 1 && diamantesJugador2 > 0 || Id == 2 && diamantesJugador1 > 0)
+            {
+                laberinto.jugador1.DiamantesRecogidos = diamantesJugador2;
+                laberinto.jugador2.DiamantesRecogidos = diamantesJugador1;
+            }
+
+            HabilidadDisponible = false;
+            laberinto.PrintMaze();
+        }
+    
     }
 
     public class Personaje4 : Jugador
@@ -269,44 +352,55 @@ namespace Project
 
         public override void ActivarHabilidad()
         {
-            Console.WriteLine("Has activado la habilidad de sumarse un diamante a su contador");
+            Console.WriteLine("Has activado la habilidad de sumarse dos diamante a su contador");
+            Console.ReadLine();
+            laberinto.PrintMaze();
             DiamantesRecogidos += 2;
             HabilidadDisponible = false;
-            //laberinto.ResetearHabilidad();
+            laberinto.PrintMaze();
         }
     }
 
     public class Personaje5 : Jugador
     {
-        //private MazeGenerator laberinto;
+        private MazeGenerator laberinto;
         public override int Velocidad => 10;
-        public Personaje5(int id, int row, int col) : base(id, row, col)
+        public Personaje5(int id, int row, int col, MazeGenerator laberinto) : base(id, row, col)
         {
             Console.WriteLine("Has elegido al personaje 5");
-            //this.laberinto = laberinto;
+            this.laberinto = laberinto;
+            Id = id;
         }
 
-        public Personaje5((int id, int row, int col) vector) : base(vector)
+        public Personaje5((int id, int row, int col) vector, MazeGenerator laberinto) : base(vector)
         {
             Console.WriteLine("Has elegido al personaje 5");
-            //this.laberinto = laberinto;
+            this.laberinto = laberinto;
+            Id = vector.id;
+            
+
         }
 
-       //public override void ActivarHabilidad()
-       // {
-            //Console.WriteLine("Has activado la habilidad de restarle dos diamantes a su oponente");
-            //if(JugadorActual.Id == 2)
-            //{
-              //  laberinto.jugador2.DiamantesRecogidos -= 2;
+        public override void ActivarHabilidad()
+        {
+            Console.WriteLine("Ha activado la habilidad de intercambiar su posicion por la de su oponente");
+            Console.ReadLine();
+            if(Id == 1)
+            {
+                (int fila, int columna) = PosicionActual;
+                PosicionActual= laberinto.jugador2.PosicionActual;
+                laberinto.jugador2.PosicionActual = (fila, columna);
+            }
+            else 
+            {
+                (int fila, int columna) = PosicionActual;
+                PosicionActual= laberinto.jugador1.PosicionActual;
+                laberinto.jugador1.PosicionActual = (fila, columna);
+            }
 
-            //}
-            //else
-            //{
-              // laberinto.jugador1.DiamantesRecogidos -= 2;
-            //}
-
-            //HabilidadDisponible = false;
-       // }
+            HabilidadDisponible = false;
+            laberinto.PrintMaze();
+        }
     
     }
 }
