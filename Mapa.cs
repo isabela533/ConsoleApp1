@@ -560,6 +560,7 @@ namespace Project
 
             if (idJugador == 1 && newRow == metaJugador1.Row && newCol == metaJugador1.Col && jugador1.DiamantesRecogidos >= 10)
             {
+                jugador1.Mover(newRow, newCol);
                 PrintMaze();
                 Console.WriteLine("¡Felicidades! El Jugador 1 ha llegado a su meta.");
                 Console.ReadLine();
@@ -568,6 +569,8 @@ namespace Project
             }
             else if (idJugador == 2 && newRow == metaJugador2.Row && newCol == metaJugador2.Col && jugador2.DiamantesRecogidos >= 10)
             {
+                jugador2.Mover(newRow,newCol);
+                PrintMaze();
                 Console.WriteLine("¡Felicidades! El Jugador 2 ha llegado a su meta.");
                 Console.ReadLine();
                 PrintMaze();
