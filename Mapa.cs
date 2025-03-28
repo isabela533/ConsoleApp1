@@ -520,19 +520,27 @@ namespace Project
 
             //Efecto de la trampa 3: te coloca nuevamente en la entrada  
             if(mapa[newRow, newCol] == "☠️  ")
-            {
-                PrintMaze();
-                Console.WriteLine("Has caido en una trampa, vuelves a la posicion inicial");
-                Console.ReadLine();
-                Console.Clear();
-                PrintMaze();
-                
+            {            
                 if(idJugador==1)
                 {
+                    jugador1.Mover(newRow, newCol);
+                    PrintMaze();
+                    Console.WriteLine("Has caido en una trampa, vuelves a la posicion inicial");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
+
                     jugador1.Mover(1,1);
                 }
                 else if (idJugador == 2)
                 {
+                    jugador2.Mover(newRow, newCol);
+                    PrintMaze();
+                    Console.WriteLine("Has caido en una trampa, vuelves a la posicion inicial");
+                    Console.ReadLine();
+                    Console.Clear();
+                    PrintMaze();
+
                     jugador2.Mover(1,33);
                 }
                 mapa[newRow, newCol] = "   ";
@@ -572,6 +580,7 @@ namespace Project
 
             return false;
         }
+
         public void JugarPorTurno()
         {
             while (true) // Bucle infinito hasta que el usuario decida salir
